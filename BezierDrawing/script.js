@@ -8,10 +8,6 @@ toggleButton.addEventListener('click', function() {
     bezierStatus.textContent = enableBezier;
 });
 
-toggleButton.addEventListener('click', function() {
-    enableBezier = !yourBooleanVariable;
-});
-
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
