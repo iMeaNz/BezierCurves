@@ -8,25 +8,6 @@ toggleButton.addEventListener('click', function() {
     bezierStatus.textContent = enableBezier;
 });
 
-let startPos = {
-    x: 0,
-    y: 0
-};
-let endPos = {
-    x: 0,
-    y: 0
-};
-
-let P1 = {
-    x: 0,
-    y: 0
-};
-
-let P2 = {
-    x: 0,
-    y: 0
-};
-
 toggleButton.addEventListener('click', function() {
     enableBezier = !yourBooleanVariable;
 });
@@ -40,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let painting = false;
     let points = [];
-    let listControlPoints = []
 
     function startPainting(e) {
         painting = true;
@@ -62,27 +42,27 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function calculateControlPoints(points) {
-        let controlPoints = [points[0]];
-    
-        for (let i = 1; i < points.length - 1; i++) {
-            let mid1 = getMidpoint(points[i - 1], points[i]);
-            let mid2 = getMidpoint(points[i], points[i + 1]);
-            
-            controlPoints.push(mid1); // First control point
-            controlPoints.push(points[i]); // This will act as the second control point
-            controlPoints.push(mid2); // Third control point
-        }
-    
-        controlPoints.push(points[points.length - 1]);
-        return controlPoints;
-    }
-    
     function getMidpoint(point1, point2) {
         return {
             x: (point1.x + point2.x) / 2,
             y: (point1.y + point2.y) / 2
         };
+    }
+
+    function calculateControlPoints(points) {
+        let controlPoints = [points[0]];
+
+        for (let i = 1; i < points.length - 1; i++) {
+            let mid1 = getMidpoint(points[i - 1], points[i]);
+            let mid2 = getMidpoint(points[i], points[i + 1]);
+
+            controlPoints.push(mid1);
+            controlPoints.push(points[i]);
+            controlPoints.push(mid2);
+        }
+
+        controlPoints.push(points[points.length - 1]);
+        return controlPoints;
     }
 
     function drawCurve() {
@@ -91,13 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let controlPoints = calculateControlPoints(points);
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
-        
+
         for (let i = 0; i < controlPoints.length - 3; i += 3) {
             let P0 = controlPoints[i];
             let P1 = controlPoints[i + 1];
             let P2 = controlPoints[i + 2];
             let P3 = controlPoints[i + 3];
-        
+
             for (let t = 0; t <= 1; t += 0.01) {
                 let x = (1 - t) * (1 - t) * (1 - t) * P0.x +
                         3 * (1 - t) * (1 - t) * t * P1.x +
@@ -107,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         3 * (1 - t) * (1 - t) * t * P1.y +
                         3 * (1 - t) * t * t * P2.y +
                         t * t * t * P3.y;
-        
+
                 ctx.lineTo(x, y);
             }
         }
-        
+
         ctx.stroke();
     }
 
@@ -124,25 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.strokeStyle = 'black';
 
         let currentPos = getMousePos(canvas, e);
-        // let lastPos = points.length > 0 ? points[points.length - 1] : null;
-
-        // if (lastPos) {
-        //     const distance = Math.sqrt(Math.pow(currentPos.x - lastPos.x, 2) + Math.pow(currentPos.y - lastPos.y, 2));
-        //     const threshold = 5; // Threshold for when to add intermediate points, adjust as needed
-
-        //     if (distance > threshold) {
-        //         // Calculate how many intermediate points you need
-        //         const count = Math.floor(distance / threshold);
-        //         for (let i = 1; i <= count; i++) {
-        //             // Interpolate the intermediate points
-        //             const x = lastPos.x + (currentPos.x - lastPos.x) * (i / count);
-        //             const y = lastPos.y + (currentPos.y - lastPos.y) * (i / count);
-        //             points.push({ x, y });
-        //         }
-        //     }
-        // }
-
-    points.push(currentPos);
+        points.push(currentPos);
         if (enableBezier) {
             drawCurve();
         } else {
